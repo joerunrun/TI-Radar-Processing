@@ -31,18 +31,23 @@
 %  
 % 
 
-% -----------------------------------------------------------------------
+%hann_local.m
 %
-% Adds the appropriate directories to the path
-%
-% -----------------------------------------------------------------------
-module_anddata="D:\xcr\mm\utils2";
-homeDir = 'D:\xcr\mm\TI-Radar-Processing';%输入自己电脑中文件夹位置
-addpath(genpath([homeDir,'/modules']));
-addpath(genpath([homeDir,'/main']));
-addpath([homeDir,'/utils/math']);
-addpath([homeDir,'/utils/dataParse']);
-addpath([homeDir,'/utils/disp']);
-addpath([homeDir,'/utils/cascade_json_parser']);
-addpath(genpath(module_anddata));
-run("Aify_cascade_MIMO_signalProcessing_view.m")
+% hann_local implement hanning window to avoid call hanning in the toolbox
+
+%input:
+%   len: window length
+
+%output:
+%   win: generated windowing coefficiens.
+
+
+
+function win = hann_local(len)
+    
+    
+     win = ((1:len)')./(len+1);
+     win = 0.5-0.5*cos(2*pi*win);
+     
+     
+end

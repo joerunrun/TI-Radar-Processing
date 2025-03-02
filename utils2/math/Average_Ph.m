@@ -29,20 +29,22 @@
 %   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
 %   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 %  
-% 
 
-% -----------------------------------------------------------------------
+%Average_Ph.m
 %
-% Adds the appropriate directories to the path
-%
-% -----------------------------------------------------------------------
-module_anddata="D:\xcr\mm\utils2";
-homeDir = 'D:\xcr\mm\TI-Radar-Processing';%输入自己电脑中文件夹位置
-addpath(genpath([homeDir,'/modules']));
-addpath(genpath([homeDir,'/main']));
-addpath([homeDir,'/utils/math']);
-addpath([homeDir,'/utils/dataParse']);
-addpath([homeDir,'/utils/disp']);
-addpath([homeDir,'/utils/cascade_json_parser']);
-addpath(genpath(module_anddata));
-run("Aify_cascade_MIMO_signalProcessing_view.m")
+% Average_Ph function tTakes input an array of angles in RADIAN units
+% Output is average of the angles in RADIAN units
+
+%input:
+%   Ph_Arr_Rad: an array of angles in RADIAN units
+
+%output:
+%   Avg_Ph: Output is average of the angles in RADIAN units
+
+
+
+function Avg_Ph = Average_Ph(Ph_Arr_Rad)
+    diff_Ph = angle(exp(1i*(Ph_Arr_Rad - Ph_Arr_Rad(1))));
+    Ph_Arr_Rad = Ph_Arr_Rad(1)+diff_Ph;
+    Avg_Ph = mean(Ph_Arr_Rad);
+end

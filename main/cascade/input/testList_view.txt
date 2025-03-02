@@ -1,3 +1,4 @@
-F:\ourDataset\20211018_match\TIRadar\match\8
-./input/512samples.mat
-./paramGen/module_param.m
+D:\xcr\mm\RT-POSE\sequences\
+D:\xcr\mm\TI-Radar-Processing\main\cascade\input\calibrateResults_high.mat
+D:\xcr\mm\TI-Radar-Processing\main\cascade\input\hardware_param.m
+33,34

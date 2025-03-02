@@ -31,18 +31,32 @@
 %  
 % 
 
-% -----------------------------------------------------------------------
-%
-% Adds the appropriate directories to the path
-%
-% -----------------------------------------------------------------------
-module_anddata="D:\xcr\mm\utils2";
-homeDir = 'D:\xcr\mm\TI-Radar-Processing';%输入自己电脑中文件夹位置
-addpath(genpath([homeDir,'/modules']));
-addpath(genpath([homeDir,'/main']));
-addpath([homeDir,'/utils/math']);
-addpath([homeDir,'/utils/dataParse']);
-addpath([homeDir,'/utils/disp']);
-addpath([homeDir,'/utils/cascade_json_parser']);
-addpath(genpath(module_anddata));
-run("Aify_cascade_MIMO_signalProcessing_view.m")
+function [binId_unique]= getUniqueFileIdx(dataFolder_test)
+
+currentFolder = pwd;
+cd(dataFolder_test);
+listing = dir('*_data.bin');
+cd(currentFolder);
+
+% (a) Find all the binaryFile Id numbers
+% Search for '_' and extract the numerical value
+binFileId = [];
+for jj=1:length(listing)
+fileName = listing(jj).name;
+[ind]=find(fileName == '_');
+binIdnumSearch = str2num(fileName(ind(1)+1:ind(2)-1));
+binFileId = [binFileId; binIdnumSearch];
+end
+binFileId = unique(binFileId);
+binId_unique = {};
+for jj=1:length(binFileId)
+binId_unique{jj} = num2str(binFileId(jj),'%04d');
+end
+
+
+
+
+
+
+
+     

@@ -29,20 +29,47 @@
 %   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
 %   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 %  
-% 
 
-% -----------------------------------------------------------------------
-%
-% Adds the appropriate directories to the path
-%
-% -----------------------------------------------------------------------
-module_anddata="D:\xcr\mm\utils2";
-homeDir = 'D:\xcr\mm\TI-Radar-Processing';%输入自己电脑中文件夹位置
-addpath(genpath([homeDir,'/modules']));
-addpath(genpath([homeDir,'/main']));
-addpath([homeDir,'/utils/math']);
-addpath([homeDir,'/utils/dataParse']);
-addpath([homeDir,'/utils/disp']);
-addpath([homeDir,'/utils/cascade_json_parser']);
-addpath(genpath(module_anddata));
-run("Aify_cascade_MIMO_signalProcessing_view.m")
+% get number of valid frames in the associated *_data.bin file captured
+% with TDA2 platform
+
+% File header in *_idx.bin:
+%     struct Info
+%     {
+%         uint32_t tag;
+%         uint32_t version;
+%         uint32_t flags;
+%         uint32_t numIdx;       // number of frames 
+%         uint64_t dataFileSize; // total data size written into file
+%     };
+% 
+% Index for every frame from each radar:
+%     struct BuffIdx
+%     {
+%         uint16_t tag;
+%         uint16_t version; /*same as Info.version*/
+%         uint32_t flags;
+%         uint16_t width;
+%         uint16_t height;
+%         uint32_t pitchOrMetaSize[4]; /*For image data, this is pitch.
+%                                                        For raw data, this is size in bytes per metadata plane.*/
+%         uint32_t size; /*total size in bytes of the data in the buffer (sum of all planes)*/
+%         uint64_t timestamp;
+%         uint64_t offset;
+%     };
+
+
+function [numIdx dataFileSize] = getValidNumFrames(adcIdxFileName)
+
+idxFile = fopen(adcIdxFileName,'r');
+heaferInfoSize = 6;
+heaferInfo = fread(idxFile, heaferInfoSize,'uint32');
+numIdx = heaferInfo(4); % number of effective frame
+fclose(idxFile);
+idxFile = fopen(adcIdxFileName,'r');
+heaferInfoSize = 3;
+heaferInfo = fread(idxFile, heaferInfoSize,'uint64');
+dataFileSize = heaferInfo(3); % data size for the effective number of frames
+fclose(idxFile);
+
+end

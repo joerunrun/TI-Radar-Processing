@@ -31,18 +31,49 @@
 %  
 % 
 
-% -----------------------------------------------------------------------
-%
-% Adds the appropriate directories to the path
-%
-% -----------------------------------------------------------------------
-module_anddata="D:\xcr\mm\utils2";
-homeDir = 'D:\xcr\mm\TI-Radar-Processing';%输入自己电脑中文件夹位置
-addpath(genpath([homeDir,'/modules']));
-addpath(genpath([homeDir,'/main']));
-addpath([homeDir,'/utils/math']);
-addpath([homeDir,'/utils/dataParse']);
-addpath([homeDir,'/utils/disp']);
-addpath([homeDir,'/utils/cascade_json_parser']);
-addpath(genpath(module_anddata));
-run("Aify_cascade_MIMO_signalProcessing_view.m")
+function [fileNameStruct]= getBinFileNames_withIdx(folderName, fileIdx)
+% Description : Given a folder name and fileIdx it returns the FileName corresponding
+% to the Master, slave1, slave2, slave3 binary files
+% Input : folderName : The name of the folder in which the data is saved
+% Output : 
+
+currentFolder = pwd;
+cd(folderName);
+listing = dir(strcat('*',fileIdx,'_data.bin'));
+listing_idx = dir(strcat('*',fileIdx,'_idx.bin'));
+
+cd(currentFolder);
+
+if (length(listing)>4)   
+    error('Too many binary Files corresponding to the same fileIdx')
+else
+    
+for ii=1:length(listing)    
+    if (strfind(listing(ii).name,'master'))
+        fileNameStruct.master = listing(ii).name;
+    end
+    if (strfind(listing(ii).name,'slave1'))
+        fileNameStruct.slave1 = listing(ii).name;
+    end
+    if (strfind(listing(ii).name,'slave2'))
+        fileNameStruct.slave2 = listing(ii).name;
+    end
+    if (strfind(listing(ii).name,'slave3'))
+        fileNameStruct.slave3 = listing(ii).name;
+    end
+    if (strfind(listing_idx(ii).name,'master'))
+        fileNameStruct.masterIdxFile = listing_idx(ii).name;
+    end
+    if (strfind(listing_idx(ii).name,'slave1'))
+        fileNameStruct.slave1IdxFile = listing_idx(ii).name;
+    end
+    if (strfind(listing_idx(ii).name,'slave2'))
+        fileNameStruct.slave2IdxFile = listing_idx(ii).name;
+    end
+    if (strfind(listing_idx(ii).name,'slave3'))
+        fileNameStruct.slave3IdxFile = listing_idx(ii).name;
+    end
+end
+    fileNameStruct.dataFolderName = folderName;
+    
+end
