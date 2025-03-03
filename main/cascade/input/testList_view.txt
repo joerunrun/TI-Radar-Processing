@@ -1,4 +1,6 @@
-D:\xcr\mm\RT-POSE\sequences\
-D:\xcr\mm\TI-Radar-Processing\main\cascade\input\calibrateResults_high.mat
-D:\xcr\mm\TI-Radar-Processing\main\cascade\input\hardware_param.m
+~/dataset/RT-POSE/sequences/
+~/dataset/RT-POSE/calibrateResults_high.mat
+~/dataset/RT-POSE/hardware_param.m
 33,34
+PLOT_ON = 0
+PRINT_INFO_ON = 0

@@ -16,10 +16,10 @@ KEY_ON = 1;% 1: on; 0:off
 PRINT_INFO_ON = 0;
 
 %是否根据原始数据文件夹中的config.mmwave.json文件重新生成参数文件
-%PARAM_FILE_GEN_ON = 1;
+
 PARAM_FILE_GEN_ON = 0;
 %处理结果是否需要画图展示
-PLOT_ON = 1; % 1: turn plot on; 0: turn plot off
+PLOT_ON = 0; % 1: turn plot on; 0: turn plot off
 %处理结果展示是否采用对数坐标
 LOG_ON = 1; % 1: log10 scale; 0: linear scale
 %绘制热力图
@@ -30,9 +30,9 @@ dataPlatform = 'TDA2';
 %% 
 
 %input文件夹目录
-input_path = strcat(pwd,'\input\');
+input_path = fullfile(pwd,'input');
 %描述待处理数据文件目录
-testList = strcat(input_path,'testList_view.txt');
+testList = fullfile(input_path,'testList_view.txt');
 %打开testList.txt文件
 fidList = fopen(testList,'r');
 %生成雷达参数文件的编号
@@ -48,6 +48,29 @@ while ~feof(fidList)%如果test.List文件不为空
     num_line = fgetl(fidList);            % 第四行：num数组的值（逗号分隔）
     num = str2num(num_line); 
     pathGenParaFile = module_param_file
+    line= fgetl(fidList);
+    [paramName, paramValue] = strtok(line, '=');
+    paramName = strtrim(paramName); % 去除空格
+    paramValue = strtrim(paramValue(2:end)); % 去除等号和空格
+    % 将参数值转换为数字
+    if ~isnan(str2double(paramValue))
+        paramValue = str2double(paramValue);
+    end
+    % 将参数赋值到工作区
+    assignin('base', paramName, paramValue);
+    line= fgetl(fidList);
+    [paramName, paramValue] = strtok(line, '=');
+    paramName = strtrim(paramName); % 去除空格
+    paramValue = strtrim(paramValue(2:end)); % 去除等号和空格
+    % 将参数值转换为数字
+    if ~isnan(str2double(paramValue))
+        paramValue = str2double(paramValue);
+    end
+    % 将参数赋值到工作区
+    assignin('base', paramName, paramValue);
+
+
+
     for seq=num
         dataFolder_test = fullfile(dataFolder_1, num2str(seq), 'radar', 'bin');
     
@@ -264,9 +287,12 @@ while ~feof(fidList)%如果test.List文件不为空
                         end
          
         
-                        output_folder="D:/xcr/mm/RT-POSE/sequences/33/save";
+                        output_folder=fullfile(dataFolder_1, num2str(seq), 'save');
                         filename = num2str(cnt_frameGlobal)+"xyzdata";
                         path = fullfile(output_folder, filename);
+                        if ~exist(output_folder, 'dir')
+                            mkdir(output_folder); % 创建目录
+                        end
                         save(path, "xyz", '-v7.3');
     
     

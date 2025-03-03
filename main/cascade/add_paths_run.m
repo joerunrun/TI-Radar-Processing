@@ -36,8 +36,8 @@
 % Adds the appropriate directories to the path
 %
 % -----------------------------------------------------------------------
-module_anddata="D:\xcr\mm\utils2";
-homeDir = 'D:\xcr\mm\TI-Radar-Processing';%输入自己电脑中文件夹位置
+module_anddata="~/submoudle/rawdataprocessing/utils2";
+homeDir = '~/submoudle/rawdataprocessing';%输入自己电脑中文件夹位置
 addpath(genpath([homeDir,'/modules']));
 addpath(genpath([homeDir,'/main']));
 addpath([homeDir,'/utils/math']);
