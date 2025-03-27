@@ -36,8 +36,8 @@
 % Adds the appropriate directories to the path
 %
 % -----------------------------------------------------------------------
-module_anddata="~/submoudle/rawdataprocessing/utils2";
-homeDir = '~/submoudle/rawdataprocessing';%输入自己电脑中文件夹位置
+module_anddata="~/submodule/rawdataprocessing/utils2";
+homeDir = '~/submodule/rawdataprocessing';%输入自己电脑中文件夹位置
 addpath(genpath([homeDir,'/modules']));
 addpath(genpath([homeDir,'/main']));
 addpath([homeDir,'/utils/math']);
@@ -45,4 +45,5 @@ addpath([homeDir,'/utils/dataParse']);
 addpath([homeDir,'/utils/disp']);
 addpath([homeDir,'/utils/cascade_json_parser']);
 addpath(genpath(module_anddata));
-run("Aify_cascade_MIMO_signalProcessing_view.m")
+disp("start");
+run("Aify_cascade_MIMO_signalProcessing_view.m");

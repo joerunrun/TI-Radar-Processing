@@ -4,126 +4,138 @@ clc;
 
 
 
-%% ²ÎÊıÉèÖÃ
+%% å‚æ•°è®¾ç½®
 
-%ÔËĞĞÖ¡Êı
+%è¿è¡Œå¸§æ•°
 numFrames_toRun = 300; %number of frame to run, can be less than the frame saved in the raw data
-%ÊÇ·ñÉáÆúµÚÒ»Ö¡£¬ÓÉÓÚµÚÒ»Ö¡ÖÊÁ¿²»¼Ñ£¬TI¹Ù·½½¨ÒéÉáÆúµÚÒ»Ö¡
+%æ˜¯å¦èˆå¼ƒç¬¬ä¸€å¸§ï¼Œç”±äºç¬¬ä¸€å¸§è´¨é‡ä¸ä½³ï¼ŒTIå®˜æ–¹å»ºè®®èˆå¼ƒç¬¬ä¸€å¸§
 abandonFirstFrame_ON = 1;
-%°´¼üÏÂÒ»Ö¡¹¦ÄÜ
+%æŒ‰é”®ä¸‹ä¸€å¸§åŠŸèƒ½
 KEY_ON = 1;% 1: on; 0:off
-%´òÓ¡µãÔÆĞÅÏ¢
+%æ‰“å°ç‚¹äº‘ä¿¡æ¯
 PRINT_INFO_ON = 0;
 
-%ÊÇ·ñ¸ù¾İÔ­Ê¼Êı¾İÎÄ¼ş¼ĞÖĞµÄconfig.mmwave.jsonÎÄ¼şÖØĞÂÉú³É²ÎÊıÎÄ¼ş
+%æ˜¯å¦æ ¹æ®åŸå§‹æ•°æ®æ–‡ä»¶å¤¹ä¸­çš„config.mmwave.jsonæ–‡ä»¶é‡æ–°ç”Ÿæˆå‚æ•°æ–‡ä»¶
 
 PARAM_FILE_GEN_ON = 0;
-%´¦Àí½á¹ûÊÇ·ñĞèÒª»­Í¼Õ¹Ê¾
+%å¤„ç†ç»“æœæ˜¯å¦éœ€è¦ç”»å›¾å±•ç¤º
 PLOT_ON = 0; % 1: turn plot on; 0: turn plot off
-%´¦Àí½á¹ûÕ¹Ê¾ÊÇ·ñ²ÉÓÃ¶ÔÊı×ø±ê
+%å¤„ç†ç»“æœå±•ç¤ºæ˜¯å¦é‡‡ç”¨å¯¹æ•°åæ ‡
 LOG_ON = 1; % 1: log10 scale; 0: linear scale
-%»æÖÆÈÈÁ¦Í¼
+%ç»˜åˆ¶çƒ­åŠ›å›¾
 DISPLAY_RANGE_AZIMUTH_DYNAMIC_HEATMAP = 0 ; % Will make things slower
 
-%Êı¾İÆ½Ì¨ÀàĞÍ
+%æ•°æ®å¹³å°ç±»å‹
 dataPlatform = 'TDA2';
 %% 
 
-%inputÎÄ¼ş¼ĞÄ¿Â¼
+%inputæ–‡ä»¶å¤¹ç›®å½•
 input_path = fullfile(pwd,'input');
-%ÃèÊö´ı´¦ÀíÊı¾İÎÄ¼şÄ¿Â¼
+disp("pwd")
+disp(pwd);
+%æè¿°å¾…å¤„ç†æ•°æ®æ–‡ä»¶ç›®å½•
 testList = fullfile(input_path,'testList_view.txt');
-%´ò¿ªtestList.txtÎÄ¼ş
+%æ‰“å¼€testList.txtæ–‡ä»¶
 fidList = fopen(testList,'r');
-%Éú³ÉÀ×´ï²ÎÊıÎÄ¼şµÄ±àºÅ
+%ç”Ÿæˆé›·è¾¾å‚æ•°æ–‡ä»¶çš„ç¼–å·
 testID = 1;
 
-while ~feof(fidList)%Èç¹ûtest.ListÎÄ¼ş²»Îª¿Õ
-    %À×´ïadcÊı¾İ Â·¾¶    
-    dataFolder_1 = fgetl(fidList);   
-    %Ğ£×¼¾ØÕó Â·¾¶
-    dataFolder_calib = fgetl(fidList);    
-    %À×´ïÉèÖÃ²ÎÊıÄ£°å Â·¾¶   %¸÷×é²ÎÊı´æÔÚ module_param.m 
-    module_param_file = fgetl(fidList);  
-    num_line = fgetl(fidList);            % µÚËÄĞĞ£ºnumÊı×éµÄÖµ£¨¶ººÅ·Ö¸ô£©
-    num = str2num(num_line); 
-    pathGenParaFile = module_param_file
-    line= fgetl(fidList);
-    [paramName, paramValue] = strtok(line, '=');
-    paramName = strtrim(paramName); % È¥³ı¿Õ¸ñ
-    paramValue = strtrim(paramValue(2:end)); % È¥³ıµÈºÅºÍ¿Õ¸ñ
-    % ½«²ÎÊıÖµ×ª»»ÎªÊı×Ö
-    if ~isnan(str2double(paramValue))
-        paramValue = str2double(paramValue);
-    end
-    % ½«²ÎÊı¸³Öµµ½¹¤×÷Çø
-    assignin('base', paramName, paramValue);
-    line= fgetl(fidList);
-    [paramName, paramValue] = strtok(line, '=');
-    paramName = strtrim(paramName); % È¥³ı¿Õ¸ñ
-    paramValue = strtrim(paramValue(2:end)); % È¥³ıµÈºÅºÍ¿Õ¸ñ
-    % ½«²ÎÊıÖµ×ª»»ÎªÊı×Ö
-    if ~isnan(str2double(paramValue))
-        paramValue = str2double(paramValue);
-    end
-    % ½«²ÎÊı¸³Öµµ½¹¤×÷Çø
-    assignin('base', paramName, paramValue);
 
+ % å®šä¹‰ log æ–‡ä»¶è·¯å¾„
+    logFile = '/root/submodule/rawdataprocessing/output_log317.txt';
+
+    % æ‰“å¼€æ–‡ä»¶ä»¥å†™å…¥ï¼ˆå¦‚æœæ–‡ä»¶å·²å­˜åœ¨ï¼Œåˆ™è¦†ç›–ï¼‰
+    fileID = fopen(logFile, 'w');
+
+    % æ£€æŸ¥æ–‡ä»¶æ˜¯å¦æˆåŠŸæ‰“å¼€
+    if fileID == -1
+        error('æ— æ³•æ‰“å¼€ log æ–‡ä»¶');
+    end
+
+
+while ~feof(fidList)%å¦‚æœtest.Listæ–‡ä»¶ä¸ä¸ºç©º
+    %é›·è¾¾adcæ•°æ® è·¯å¾„    
+    dataFolder_1 = fgetl(fidList);   
+    %æ ¡å‡†çŸ©é˜µ è·¯å¾„
+    dataFolder_calib = fgetl(fidList);    
+    %é›·è¾¾è®¾ç½®å‚æ•°æ¨¡æ¿ è·¯å¾„   %å„ç»„å‚æ•°å­˜åœ¨ module_param.m 
+    module_param_file = fgetl(fidList);  
+    num=66:68
+    pathGenParaFile = module_param_file
+   
+   
+   
 
 
     for seq=num
+        zipFileName = fullfile(dataFolder_1, [num2str(seq), '.zip']);
+        
+        % æ£€æŸ¥zipæ–‡ä»¶æ˜¯å¦å­˜åœ¨
+        if isfile(zipFileName)
+            unzip(zipFileName, dataFolder_1);
+        
+        else
+            % å¦‚æœ zip æ–‡ä»¶ä¸å­˜åœ¨ï¼Œæ‰“å°æç¤ºä¿¡æ¯å¹¶è·³è¿‡
+            fprintf(fileID,'Zip æ–‡ä»¶ä¸å­˜åœ¨: %s\n', zipFileName);
+            continue;  % æˆ–è€…ä½¿ç”¨ continueï¼Œå…·ä½“å–å†³äºä½ çš„ä»£ç ç»“æ„
+        end
         dataFolder_test = fullfile(dataFolder_1, num2str(seq), 'radar', 'bin');
-    
+        if ~isfolder(dataFolder_test)
+            % å¦‚æœæ–‡ä»¶å¤¹ä¸å­˜åœ¨ï¼Œæ‰“å°æç¤ºä¿¡æ¯å¹¶è·³è¿‡
+            fprintf(fileID,'æ–‡ä»¶å¤¹ä¸å­˜åœ¨: %s\n', dataFolder_test);
+            continue;  % æˆ–è€…ä½¿ç”¨ continueï¼Œå…·ä½“å–å†³äºä½ çš„ä»£ç ç»“æ„
+        end
+
         %load calibration parameters
-        % ¼ÓÔØĞ£×¼ÎÄ¼ş
+        % åŠ è½½æ ¡å‡†æ–‡ä»¶
         load(dataFolder_calib)
         
         % simTopObj is used for top level parameter parsing and data loading and saving
-        %simTop½²ÁËÒ»Ğ©»ù±¾ÅäÖÃ£¬ÀûÓÃµ½Ç°ÃæÉú³ÉµÄpathGenParaFile
+        %simTopè®²äº†ä¸€äº›åŸºæœ¬é…ç½®ï¼Œåˆ©ç”¨åˆ°å‰é¢ç”Ÿæˆçš„pathGenParaFile
          
-        %('pfile',...)Ïàµ±ÓÚ×Öµä£¬Ë÷ÒıºÍÖµ
-        simTopObj           = simTopCascade('pfile', pathGenParaFile); %ÄÚº¬ÈçºÎ¶ÁÈ¡adcÊı¾İ
+        %('pfile',...)ç›¸å½“äºå­—å…¸ï¼Œç´¢å¼•å’Œå€¼
+        simTopObj           = simTopCascade('pfile', pathGenParaFile); %å†…å«å¦‚ä½•è¯»å–adcæ•°æ®
         calibrationObj      = calibrationCascade('pfile', pathGenParaFile, 'calibrationfilePath', dataFolder_calib);
-        rangeFFTObj         = rangeProcCascade('pfile', pathGenParaFile);%ÄÚº¬ÈçºÎ¶ÔÊı¾İ½øĞĞrangeFFT´¦Àí
-        DopplerFFTObj       = DopplerProcClutterRemove('pfile', pathGenParaFile);%ÄÚº¬ÈçºÎ¶ÔÊı¾İ½øĞĞDopplerFFT´¦Àí
-        %     detectionObj        = CFAR_CASO('pfile', pathGenParaFile);%CFAR_CASOËã·¨
-        detectionObj        = CFAR_OS('pfile', pathGenParaFile);%CFAR_OSËã·¨
+        rangeFFTObj         = rangeProcCascade('pfile', pathGenParaFile);%å†…å«å¦‚ä½•å¯¹æ•°æ®è¿›è¡ŒrangeFFTå¤„ç†
+        DopplerFFTObj       = DopplerProcClutterRemove('pfile', pathGenParaFile);%å†…å«å¦‚ä½•å¯¹æ•°æ®è¿›è¡ŒDopplerFFTå¤„ç†
+        %     detectionObj        = CFAR_CASO('pfile', pathGenParaFile);%CFAR_CASOç®—æ³•
+        detectionObj        = CFAR_OS('pfile', pathGenParaFile);%CFAR_OSç®—æ³•
         DOAObj              = DOACascade('pfile', pathGenParaFile);
         
-        platform = simTopObj.platform;%Ê¹ÓÃÆ½Ì¨ÀàĞÍ
-        numValidFrames = simTopObj.totNumFrames;%Éè¶¨ÓĞĞ§Ö¡Êı
+        platform = simTopObj.platform;%ä½¿ç”¨å¹³å°ç±»å‹
+        numValidFrames = simTopObj.totNumFrames;%è®¾å®šæœ‰æ•ˆå¸§æ•°
         
-        % ´¦ÀíÖ¡¼ÆÊıÆ÷£¬1¿ªÊ¼ÓĞĞ§
+        % å¤„ç†å¸§è®¡æ•°å™¨ï¼Œ1å¼€å§‹æœ‰æ•ˆ
         cnt_processed = 0;
-        % È«¾ÖµÚ¼¸Ö¡¼ÆÊı£¬1¿ªÊ¼ÓĞĞ§
+        % å…¨å±€ç¬¬å‡ å¸§è®¡æ•°ï¼Œ1å¼€å§‹æœ‰æ•ˆ
         cnt_frameGlobal = 0;
     
         %{
-        % ²éÑ¯PC¶Ë²É¼¯¿ªÊ¼Ê±¼ä´Á
+        % æŸ¥è¯¢PCç«¯é‡‡é›†å¼€å§‹æ—¶é—´æˆ³
         startTimefile = dir(fullfile(dataFolder_test, '*.startTime.txt'));
         f_startTime = fopen(fullfile(startTimefile.folder, startTimefile.name), 'r');
         startTime = fscanf(f_startTime, '%f');
         fclose(f_startTime);    
-        startTime = uint64(startTime*1000000);%16Î»UNIXÊ±¼ä
+        startTime = uint64(startTime*1000000);%16ä½UNIXæ—¶é—´
         %}
     
-        % »ñÈ¡²É¼¯Ö¡¼ä¸ôÊ±¼ä(µ¥Î»s)
+        % è·å–é‡‡é›†å¸§é—´éš”æ—¶é—´(å•ä½s)
         frameInterval = getPara(pathGenParaFile, 'framePeriodicty');
-        
+        fprintf(fileID, 'å¤„ç†seq %d\n', seq);
             
-        %»ñµÃÊı¾İ·ÖÆ¬Êı£¬Àı£º0000, 0001, 0002...   
+        %è·å¾—æ•°æ®åˆ†ç‰‡æ•°ï¼Œä¾‹ï¼š0000, 0001, 0002...   
         [fileIdx_unique] = getUniqueFileIdx(dataFolder_test);    
         for i_file = 1:length(fileIdx_unique)
             
             % Get File Names for the Master, Slave1, Slave2, Slave3  
-            % µÃµ½adcÊı¾İÎÄ¼ş¡¢idxÊı¾İÎÄ¼şµÄÎÄ¼şÃû     
+            % å¾—åˆ°adcæ•°æ®æ–‡ä»¶ã€idxæ•°æ®æ–‡ä»¶çš„æ–‡ä»¶å     
             [fileNameStruct]= getBinFileNames_withIdx(dataFolder_test, fileIdx_unique{i_file});   
            
             % pass the Data File to the calibration Object
-            % ´«µİ Êı¾İÎÄ¼şÃûÖÁcalibrationObjµÄbinfilePathÊôĞÔ
+            % ä¼ é€’ æ•°æ®æ–‡ä»¶åè‡³calibrationObjçš„binfilePathå±æ€§
             calibrationObj.binfilePath = fileNameStruct;
             
-            % µÃÓĞĞ§Ö¡Êı
+            % å¾—æœ‰æ•ˆå¸§æ•°
             [numValidFrames, ~] = getValidNumFrames(fullfile(dataFolder_test, fileNameStruct.masterIdxFile));
             
             %intentionally skip the first frame due to TDA2
@@ -132,69 +144,69 @@ while ~feof(fidList)%Èç¹ûtest.ListÎÄ¼ş²»Îª¿Õ
                 if abandonFirstFrame_ON==1 && frameIdx==2
                     cnt_frameGlobal = cnt_frameGlobal+1;
                 end
-                 %È«¾ÖÖ¡¼ÆÊıÆ÷+1
+                 %å…¨å±€å¸§è®¡æ•°å™¨+1
                 cnt_frameGlobal = cnt_frameGlobal+1;
                 
               
     
-                disp('===========================================================');
-                fprintf('ÕıÔÚ·ÃÎÊµÚ %s Æ¬ÖĞµÚ %d/%d Ö¡£¨È«¾ÖµÄµÚ %d/%d Ö¡£©\n',  fileIdx_unique{i_file}, frameIdx, numValidFrames,...
-                    cnt_frameGlobal, simTopObj.totNumFrames);
+            %    disp('===========================================================');
+            %    fprintf('æ­£åœ¨è®¿é—®ç¬¬ %s ç‰‡ä¸­ç¬¬ %d/%d å¸§ï¼ˆå…¨å±€çš„ç¬¬ %d/%d å¸§ï¼‰ï¼Œ \n',  fileIdx_unique{i_file}, frameIdx, numValidFrames,...
+            %        cnt_frameGlobal, simTopObj.totNumFrames);
                 
                 
-                %============================¶ÁÈ¡»·½Ú==========================================
-                tic;%¿ªÊ¼¼ÆÊ±£¬¼ÆËãµ¥Ö¡¶ÁÈ¡ºÄ·ÑÊ±¼ä
+                %============================è¯»å–ç¯èŠ‚==========================================
+                tic;%å¼€å§‹è®¡æ—¶ï¼Œè®¡ç®—å•å¸§è¯»å–è€—è´¹æ—¶é—´
                 
                 % read and calibrate raw ADC data            
                 calibrationObj.frameIdx = frameIdx;
-                % Î¬¶È£¨Ã¿¸öChirpÖĞµÄ²ÉÑùµãÊı£¬loopµÄÊıÄ¿£¬RXÊıÁ¿£¬Ò»¸öloopÖĞchirpsµÄÊıÁ¿£¨Í¨³£ÓëTXÊıÁ¿ÏàµÈ£©£©
+                % ç»´åº¦ï¼ˆæ¯ä¸ªChirpä¸­çš„é‡‡æ ·ç‚¹æ•°ï¼Œloopçš„æ•°ç›®ï¼ŒRXæ•°é‡ï¼Œä¸€ä¸ªloopä¸­chirpsçš„æ•°é‡ï¼ˆé€šå¸¸ä¸TXæ•°é‡ç›¸ç­‰ï¼‰ï¼‰
                 adcData = datapath(calibrationObj);
                 % RX Channel re-ordering
-                % ¸ù¾İÌìÏß°åµÄÎ»ÖÃ¹ØÏµ£¬ÖØĞÂÅÅÁĞÌìÏß±àºÅ £ºĞ¾Æ¬4£¬Ğ¾Æ¬1£¬Ğ¾Æ¬3£¬Ğ¾Æ¬2
+                % æ ¹æ®å¤©çº¿æ¿çš„ä½ç½®å…³ç³»ï¼Œé‡æ–°æ’åˆ—å¤©çº¿ç¼–å· ï¼šèŠ¯ç‰‡4ï¼ŒèŠ¯ç‰‡1ï¼ŒèŠ¯ç‰‡3ï¼ŒèŠ¯ç‰‡2
                 adcData = adcData(:,:,calibrationObj.RxForMIMOProcess,:);
                 
                 
     
                 time = toc;
-                disp(['¶ÁÈ¡ºÄÊ± ',num2str(time), 's']);
+            %    disp(['è¯»å–è€—æ—¶ ',num2str(time), 's']);
                 %============================================================================
                 
                 
-                %============================ĞÅºÅ´¦Àí»·½Ú==========================================
+                %============================ä¿¡å·å¤„ç†ç¯èŠ‚==========================================
                 tic;
                 
                 %perform 2D FFT
                 rangeFFTOut = [];
                 DopplerFFTOut = [];            
-                for i_tx = 1: size(adcData,4)%¶ÔµÚi_tx¸öloop/·¢ÉäÌìÏß½øĞĞ´¦Àí
+                for i_tx = 1: size(adcData,4)%å¯¹ç¬¬i_txä¸ªloop/å‘å°„å¤©çº¿è¿›è¡Œå¤„ç†
                     % range FFT
-                    %ÊäÈë¡¾²ÉÑùµãÃ¿¸öchrip,chrips/frame,ÌìÏßÊı£¨Õ¼Á½¸ö£©¡¿  Êä³ö[rangeFFTSize, numLines£¨chripÊıÁ¿£©, numAnt]
-                    rangeFFTOut(:,:,:,i_tx)     = datapath(rangeFFTObj, adcData(:,:,:,i_tx));%½øĞĞrangeFFT´¦Àí£¬datapathÎ»ÓÚmodule£ºrangeProc
+                    %è¾“å…¥ã€é‡‡æ ·ç‚¹æ¯ä¸ªchrip,chrips/frame,å¤©çº¿æ•°ï¼ˆå ä¸¤ä¸ªï¼‰ã€‘  è¾“å‡º[rangeFFTSize, numLinesï¼ˆchripæ•°é‡ï¼‰, numAnt]
+                    rangeFFTOut(:,:,:,i_tx)     = datapath(rangeFFTObj, adcData(:,:,:,i_tx));%è¿›è¡ŒrangeFFTå¤„ç†ï¼Œdatapathä½äºmoduleï¼šrangeProc
                     % Doppler FFT
                     %input:[numSamplePerChirp, numChirpsPerFrame, numAntenna] 
-                  %out£º´¦ÀíºóµÄÊı¾İ£¬´óĞ¡Îª [numLines, obj.dopplerFFTSize, numAnt]  
-                    DopplerFFTOut(:,:,:,i_tx)   = datapath(DopplerFFTObj, rangeFFTOut(:,:,:,i_tx));%½øĞĞDopplerFFT´¦Àí£¬datapathÎ»ÓÚmodule£ºDopplerProc
+                  %outï¼šå¤„ç†åçš„æ•°æ®ï¼Œå¤§å°ä¸º [numLines, obj.dopplerFFTSize, numAnt]  
+                    DopplerFFTOut(:,:,:,i_tx)   = datapath(DopplerFFTObj, rangeFFTOut(:,:,:,i_tx));%è¿›è¡ŒDopplerFFTå¤„ç†ï¼Œdatapathä½äºmoduleï¼šDopplerProc
                 end
                 
-                % ×ª»¯ÎªĞéÄâÌìÏßĞÎÊ½£¬Î¬¶È£¨Ã¿¸öChirpÖĞµÄ²ÉÑùµãÊı£¬Ã¿¸ùÌìÏß·¢ÉäµÄchirpÊıÁ¿£¬ĞéÄâÌìÏßÊıÁ¿ £©
+                % è½¬åŒ–ä¸ºè™šæ‹Ÿå¤©çº¿å½¢å¼ï¼Œç»´åº¦ï¼ˆæ¯ä¸ªChirpä¸­çš„é‡‡æ ·ç‚¹æ•°ï¼Œæ¯æ ¹å¤©çº¿å‘å°„çš„chirpæ•°é‡ï¼Œè™šæ‹Ÿå¤©çº¿æ•°é‡ ï¼‰
                 DopplerFFTOut = reshape(DopplerFFTOut,size(DopplerFFTOut,1), size(DopplerFFTOut,2), size(DopplerFFTOut,3)*size(DopplerFFTOut,4));
-                %¶ÔDopplerFFTOutÔÚdim=3ÉÏÇóºÍÈ¡¶ÔÊıºóµÃsig_integrate
+                %å¯¹DopplerFFTOutåœ¨dim=3ä¸Šæ±‚å’Œå–å¯¹æ•°åå¾—sig_integrate
                 sig_integrate = 10*log10(sum((abs(DopplerFFTOut)).^2,3) + 1);
                 
-    %             %±ê¶¨Ê±£¬Í¨¹ı×÷²îÈ¥³ı»·¾³£¬ÕÒ½Ç·´ÉäÆ÷
+    %             %æ ‡å®šæ—¶ï¼Œé€šè¿‡ä½œå·®å»é™¤ç¯å¢ƒï¼Œæ‰¾è§’åå°„å™¨
     %             base = load('./temp');
     %             sig_integrate = sig_integrate - base.sig_integrate;
                 
                 % CFAR done along only TX and RX used in MIMO array
-                % ½øĞĞdetection£¨CFAR£©´¦Àí£¬datapathÎ»ÓÚmodule£ºdetection
+                % è¿›è¡Œdetectionï¼ˆCFARï¼‰å¤„ç†ï¼Œdatapathä½äºmoduleï¼šdetection
                 detection_results = datapath(detectionObj, DopplerFFTOut);
                 
-                detect_all_points = [];%³õÊ¼»¯¼ì²âµ½µÄµãµÄĞÅÏ¢¾ØÕó
+                detect_all_points = [];%åˆå§‹åŒ–æ£€æµ‹åˆ°çš„ç‚¹çš„ä¿¡æ¯çŸ©é˜µ
                
                 for iobj = 1:length(detection_results)
                     detect_all_points (iobj,1)=detection_results(iobj).rangeInd+1;%range index
                     detect_all_points (iobj,2)=detection_results(iobj).dopplerInd_org+1;%doppler index
-                    detect_all_points (iobj,4)=detection_results(iobj).estSNR;%·´ÉäÇ¿¶È
+                    detect_all_points (iobj,4)=detection_results(iobj).estSNR;%åå°„å¼ºåº¦
                 end
                 
                 if PLOT_ON==1
@@ -206,22 +218,22 @@ while ~feof(fidList)%Èç¹ûtest.ListÎÄ¼ş²»Îª¿Õ
                     set(gcf,'units','normalized','outerposition',[0.1 0.2 0.8 0.8]);
                     
                     subplot(2,2,1);
-                    %ÒâÒå£ºÕ¹Ê¾DopplerFFTOutµÄÖĞ¼äÒ»ÁĞ£¬ËÙ¶ÈÎª0¾²Ì¬Ä¿±êµÄrangeÍ¼
-                    %ºá×ø±êrange ×İ×ø±ê·´ÉäÇ¿¶È
+                    %æ„ä¹‰ï¼šå±•ç¤ºDopplerFFTOutçš„ä¸­é—´ä¸€åˆ—ï¼Œé€Ÿåº¦ä¸º0é™æ€ç›®æ ‡çš„rangeå›¾
+                    %æ¨ªåæ ‡range çºµåæ ‡åå°„å¼ºåº¦
                     rangeList = (1: size(sig_integrate,1)) * detectionObj.rangeBinSize;
                     powerList_v0 = sig_integrate(:, size(sig_integrate,2)/2+1);
                     plot(rangeList, powerList_v0, 'g', 'LineWidth', 4);
                     hold on;
                     grid on;
-                    for ii=1:size(sig_integrate,2)%DopplerFFTOutµÄµÚiiÁĞ£¬ËÙ¶È²»Îª0µÄÁĞ
+                    for ii=1:size(sig_integrate,2)%DopplerFFTOutçš„ç¬¬iiåˆ—ï¼Œé€Ÿåº¦ä¸ä¸º0çš„åˆ—
                         powerList_vii = sig_integrate(:,ii);
                         plot(rangeList, powerList_vii);
                         hold on;
                         grid on;
-                        if ~isempty(detection_results)%Èç¹ûÍ¨¹ıCFARËã·¨¼ì²âµ½ÁËÄ¿±ê
-                            ind = find(detect_all_points(:,2)==ii);%ÕÒµ½µ±Ç°Doppler¼ì²âËÙ¶È¶ÔÓ¦µÄ¼ì²âµã
-                            if (~isempty(ind))%Èç¹ûÓĞ¼à²âµã
-                                rangeInd = detect_all_points(ind,1);%È¡¼ì²âµ½µÄµãµÄrange
+                        if ~isempty(detection_results)%å¦‚æœé€šè¿‡CFARç®—æ³•æ£€æµ‹åˆ°äº†ç›®æ ‡
+                            ind = find(detect_all_points(:,2)==ii);%æ‰¾åˆ°å½“å‰Doppleræ£€æµ‹é€Ÿåº¦å¯¹åº”çš„æ£€æµ‹ç‚¹
+                            if (~isempty(ind))%å¦‚æœæœ‰ç›‘æµ‹ç‚¹
+                                rangeInd = detect_all_points(ind,1);%å–æ£€æµ‹åˆ°çš„ç‚¹çš„range
                                 plot(rangeInd*detectionObj.rangeBinSize, sig_integrate(rangeInd,ii),'o','LineWidth',2,...
                                     'MarkerEdgeColor','k',...
                                     'MarkerFaceColor',[.49 1 .63],...
@@ -235,8 +247,8 @@ while ~feof(fidList)%Èç¹ûtest.ListÎÄ¼ş²»Îª¿Õ
                     hold off;
                     
                     subplot(2,2,2);
-                    % ÒâÒå£ºDoppler Map
-                    % ºá×ø±ê¡ª¡ªËÙ¶È£¬×İ×ø±ê¡ª¡ª¾àÀë
+                    % æ„ä¹‰ï¼šDoppler Map
+                    % æ¨ªåæ ‡â€”â€”é€Ÿåº¦ï¼Œçºµåæ ‡â€”â€”è·ç¦»
                     velocityList = (-size(sig_integrate,2)/2: size(sig_integrate,2)/2-1) * detectionObj.velocityBinSize;
                     rangeList = (1: size(sig_integrate,1)) * detectionObj.rangeBinSize;                
                     imagesc(velocityList, rangeList, sig_integrate);
@@ -245,40 +257,40 @@ while ~feof(fidList)%Èç¹ûtest.ListÎÄ¼ş²»Îª¿Õ
                     title(' Range/Velocity Plot');
                 end
                 
-                angles_all_points = [];%³õÊ¼»¯¼ì²âµã·½Î»½Ç¾ØÕó
-                xyz = [];%³õÊ¼»¯¼ì²âµã¿Õ¼ä×ø±ê¾ØÕó
+                angles_all_points = [];%åˆå§‹åŒ–æ£€æµ‹ç‚¹æ–¹ä½è§’çŸ©é˜µ
+                xyz = [];%åˆå§‹åŒ–æ£€æµ‹ç‚¹ç©ºé—´åæ ‡çŸ©é˜µ
                 
-                if ~isempty(detection_results)%Èç¹û¼ì²âµ½µã
+                if ~isempty(detection_results)%å¦‚æœæ£€æµ‹åˆ°ç‚¹
                     % DOA, the results include detection results + angle estimation results.
                     % access data with angleEst{frame}(objectIdx).fieldName
-                    angleEst = datapath(DOAObj, detection_results);%½øĞĞangle estimation
+                    angleEst = datapath(DOAObj, detection_results);%è¿›è¡Œangle estimation
                     
-                    if length(angleEst) > 0%Èç¹û¼ì²âµ½½Ç¶È½á¹û
-                        for iobj = 1:length(angleEst)%¶ÔµÚiobj¸ö¼ì²â½á¹û
-                            % angleEst.anglesÓĞ4¸öÖµ£¬È¡Ç°Á½¸ö£ºµÚÒ»¸öÎª·½Î»½Çazimuth£¬µÚ¶ş¸öÎª¸ß³Ì½Çelvation
-                            angles_all_points (iobj,1)=angleEst(iobj).angles(1);%·½Î»½Çazimuth
-                            % Ô­ÏÈzÖµÓëÏÖÊµ×ø±ê·´ÁË£¬Ô­ÒòÊÇÕâÀïµÄelevationÕı¸ººÅ³ö´íÁË£¬Òò´ËÓÚ20210531ĞŞÕı
-                            angles_all_points (iobj,2)=-angleEst(iobj).angles(2);%¸ß³Ì½Çelvation
-                            angles_all_points (iobj,3)=angleEst(iobj).estSNR;%Ô¤²âĞÅÔë±È
-                            angles_all_points (iobj,4)=angleEst(iobj).rangeInd;%È¡rangeµÄIndex
-                            angles_all_points (iobj,5)=angleEst(iobj).doppler_corr;%È¡doppler_corr
-                            angles_all_points (iobj,6)=angleEst(iobj).range;%È¡range
+                    if length(angleEst) > 0%å¦‚æœæ£€æµ‹åˆ°è§’åº¦ç»“æœ
+                        for iobj = 1:length(angleEst)%å¯¹ç¬¬iobjä¸ªæ£€æµ‹ç»“æœ
+                            % angleEst.anglesæœ‰4ä¸ªå€¼ï¼Œå–å‰ä¸¤ä¸ªï¼šç¬¬ä¸€ä¸ªä¸ºæ–¹ä½è§’azimuthï¼Œç¬¬äºŒä¸ªä¸ºé«˜ç¨‹è§’elvation
+                            angles_all_points (iobj,1)=angleEst(iobj).angles(1);%æ–¹ä½è§’azimuth
+                            % åŸå…ˆzå€¼ä¸ç°å®åæ ‡åäº†ï¼ŒåŸå› æ˜¯è¿™é‡Œçš„elevationæ­£è´Ÿå·å‡ºé”™äº†ï¼Œå› æ­¤äº20210531ä¿®æ­£
+                            angles_all_points (iobj,2)=-angleEst(iobj).angles(2);%é«˜ç¨‹è§’elvation
+                            angles_all_points (iobj,3)=angleEst(iobj).estSNR;%é¢„æµ‹ä¿¡å™ªæ¯”
+                            angles_all_points (iobj,4)=angleEst(iobj).rangeInd;%å–rangeçš„Index
+                            angles_all_points (iobj,5)=angleEst(iobj).doppler_corr;%å–doppler_corr
+                            angles_all_points (iobj,6)=angleEst(iobj).range;%å–range
                             
                             xyz(iobj,1) = angles_all_points (iobj,6)*sind(angles_all_points (iobj,1))*cosd(angles_all_points (iobj,2));%x
                             xyz(iobj,2) = angles_all_points (iobj,6)*cosd(angles_all_points (iobj,1))*cosd(angles_all_points (iobj,2));%y
                             % switch upside and down, the elevation angle is flipped
-                            % Ô­ÏÈÕâÀïzÖµÓëÏÖÊµ×ø±ê·´ÁË£¬Ô­ÒòÊÇelevationÕı¸ººÅ³ö´íÁË£¬ÒÑÓÚ20210531ĞŞÕı
+                            % åŸå…ˆè¿™é‡Œzå€¼ä¸ç°å®åæ ‡åäº†ï¼ŒåŸå› æ˜¯elevationæ­£è´Ÿå·å‡ºé”™äº†ï¼Œå·²äº20210531ä¿®æ­£
                             xyz(iobj,3) = angles_all_points (iobj,6)*sind(angles_all_points (iobj,2));%z
-                            xyz(iobj,4) = angleEst(iobj).doppler_corr;%È¡doppler_corr
-                            xyz(iobj,9) = angleEst(iobj).dopplerInd_org;%È¡dopplerInd_org
-                            xyz(iobj,5) = angleEst(iobj).range;%È¡range
-                            xyz(iobj,6) = angleEst(iobj).estSNR;%È¡¹À¼ÆĞÅÔë±È
-                            xyz(iobj,7) = angleEst(iobj).doppler_corr_overlap;%È¡doppler_corr_overlap
-                            xyz(iobj,8) = angleEst(iobj).doppler_corr_FFT;%È¡doppler_corr_FFT
+                            xyz(iobj,4) = angleEst(iobj).doppler_corr;%å–doppler_corr
+                            xyz(iobj,9) = angleEst(iobj).dopplerInd_org;%å–dopplerInd_org
+                            xyz(iobj,5) = angleEst(iobj).range;%å–range
+                            xyz(iobj,6) = angleEst(iobj).estSNR;%å–ä¼°è®¡ä¿¡å™ªæ¯”
+                            xyz(iobj,7) = angleEst(iobj).doppler_corr_overlap;%å–doppler_corr_overlap
+                            xyz(iobj,8) = angleEst(iobj).doppler_corr_FFT;%å–doppler_corr_FFT
                         end
                         xyz_all{cnt_frameGlobal}  = xyz;
                    
-                        % ´òÓ¡µãÔÆĞÅÏ¢
+                        % æ‰“å°ç‚¹äº‘ä¿¡æ¯
                         if PRINT_INFO_ON==1
                             fprintf('%14s%20s%20s%22s%14s%16s\n', 'X', 'Y', 'Z', 'Velocity', 'Range', 'estSNR');
                             for iprint = 1:size(xyz,1)
@@ -287,11 +299,11 @@ while ~feof(fidList)%Èç¹ûtest.ListÎÄ¼ş²»Îª¿Õ
                         end
          
         
-                        output_folder=fullfile(dataFolder_1, num2str(seq), 'save');
+                        output_folder=fullfile(dataFolder_1, num2str(seq), 'radarpcd');
                         filename = num2str(cnt_frameGlobal)+"xyzdata";
                         path = fullfile(output_folder, filename);
                         if ~exist(output_folder, 'dir')
-                            mkdir(output_folder); % ´´½¨Ä¿Â¼
+                            mkdir(output_folder); % åˆ›å»ºç›®å½•
                         end
                         save(path, "xyz", '-v7.3');
     
@@ -300,9 +312,9 @@ while ~feof(fidList)%Èç¹ûtest.ListÎÄ¼ş²»Îª¿Õ
     
                
                         if PLOT_ON==1
-                            moveID = find(abs(xyz(:,4))>=0);%¼ì²éabs(doppler_corr)´óÓÚµÈÓÚ0µÄÄ¿±ê
-                            subplot(2,2,4);%»æÖÆµãÔÆÍ¼
-                            %¶¨Òå×ø±êÏµÎªyÊÇÀ×´ï°åÕıÇ°·½
+                            moveID = find(abs(xyz(:,4))>=0);%æ£€æŸ¥abs(doppler_corr)å¤§äºç­‰äº0çš„ç›®æ ‡
+                            subplot(2,2,4);%ç»˜åˆ¶ç‚¹äº‘å›¾
+                            %å®šä¹‰åæ ‡ç³»ä¸ºyæ˜¯é›·è¾¾æ¿æ­£å‰æ–¹
                             scatter3(xyz(moveID,1), xyz(moveID,2), xyz(moveID,3), 10, (xyz(moveID,4)),'filled');%x,y,z,doppler_corr
                             c = colorbar;
                             c.Label.String = 'velocity (m/s)';
@@ -325,7 +337,7 @@ while ~feof(fidList)%Èç¹ûtest.ListÎÄ¼ş²»Îª¿Õ
                             hold off;
                             
                             %plot range and azimuth heatmap
-                            subplot(2,2,3)%»æÖÆ¾²Ì¬Ä¿±ê£¬rangeºÍazimuthÈÈÁ¦Í¼
+                            subplot(2,2,3)%ç»˜åˆ¶é™æ€ç›®æ ‡ï¼Œrangeå’Œazimuthçƒ­åŠ›å›¾
                             mode = 'static';%mode: 'static'/'dynamic'/'static+dynamic'
                             minRangeBinKeep =  5;
                             rightRangeBinDiscard =  20;
@@ -335,21 +347,21 @@ while ~feof(fidList)%Èç¹ûtest.ListÎÄ¼ş²»Îª¿Õ
                             title('range/azimuth heat map static objects');
                            
                             
-                            % »æÖÆ¶¯Ì¬¾²Ì¬ÈÈÁ¦Í¼
+                            % ç»˜åˆ¶åŠ¨æ€é™æ€çƒ­åŠ›å›¾
                             if DISPLAY_RANGE_AZIMUTH_DYNAMIC_HEATMAP==1
                                 if KEY_ON==1
                                     figure(2);
                                 else
                                     figure();
                                 end
-                                subplot(121);%»æÖÆ¾²Ì¬Ä¿±ê£¬rangeºÍazimuthÈÈÁ¦Í¼
+                                subplot(121);%ç»˜åˆ¶é™æ€ç›®æ ‡ï¼Œrangeå’Œazimuthçƒ­åŠ›å›¾
                                 surf(y_axis, x_axis, (mag_data_static(:,:,cnt_frameGlobal)).^0.1,'EdgeColor','none');
                                 view(2);
                                 xlabel('meters');    ylabel('meters');
                                 axis('equal');
                                 title({'Static Range-Azimuth Heatmap',strcat('Current Frame Number = ', num2str(cnt_frameGlobal))})
     
-                                subplot(122);%»æÖÆ¶¯Ì¬Ä¿±ê£¬rangeºÍazimuthÈÈÁ¦Í¼
+                                subplot(122);%ç»˜åˆ¶åŠ¨æ€ç›®æ ‡ï¼Œrangeå’Œazimuthçƒ­åŠ›å›¾
                                 surf(y_axis, x_axis, (mag_data_dynamic(:,:,cnt_frameGlobal)).^0.4,'EdgeColor','none');
                                 view(2);    
                                 xlabel('meters');    ylabel('meters');
@@ -363,11 +375,11 @@ while ~feof(fidList)%Èç¹ûtest.ListÎÄ¼ş²»Îª¿Õ
                 end
                       
                 time = toc;
-                disp(['´¦ÀíºÄÊ±',num2str(time), 's']);
-                disp('===========================================================');
-                cnt_processed = cnt_processed + 1; %´¦ÀíÊı¾İ¼ÆÊıÆ÷+1
+            %    disp(['å¤„ç†è€—æ—¶',num2str(time), 's']);
+            %    disp('===========================================================');
+                cnt_processed = cnt_processed + 1; %å¤„ç†æ•°æ®è®¡æ•°å™¨+1
                 KEY_ON=0;
-                 %µÈ´ı°´¼ü
+                 %ç­‰å¾…æŒ‰é”®
                 if KEY_ON == 0
                     continue;
                 end             
@@ -376,11 +388,22 @@ while ~feof(fidList)%Èç¹ûtest.ListÎÄ¼ş²»Îª¿Õ
                     key = waitforbuttonpress;
                 end
                 
-            end%ÖğÖ¡´¦ÀíÑ­»·½áÊø        
-        end%ÖğÆ¬Êı¾İ´¦ÀíÑ­»·½áÊø
+            end%é€å¸§å¤„ç†å¾ªç¯ç»“æŸ        
+        end%é€ç‰‡æ•°æ®å¤„ç†å¾ªç¯ç»“æŸ
         %============================================================================
         
         testID = testID + 1;
+
+
+        delete=  fullfile(dataFolder_1, num2str(seq), 'radar');
+        if exist(delete, 'dir')
+            rmdir(delete, 's');
+            fprintf(fileID, 'å·²åˆ é™¤ %s', delete);
+        else
+            fprintf(fileID, 'ä¸å­˜åœ¨ %s', delete);
+        end
     end
 end
 fclose(fidList);
+fclose(fileID);
+disp('è®¡ç®—å®Œæˆï¼Œç»“æœå·²å†™å…¥ output_log317.txt');

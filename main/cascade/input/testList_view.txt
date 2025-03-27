@@ -1,6 +1,3 @@
-~/dataset/RT-POSE/sequences/
-~/dataset/RT-POSE/calibrateResults_high.mat
-~/dataset/RT-POSE/hardware_param.m
-33,34
-PLOT_ON = 0
-PRINT_INFO_ON = 0
+/NVMe6/RT-Pose/sequences
+/root/calibrateResults_high.mat
+/root/hardware_param.m
