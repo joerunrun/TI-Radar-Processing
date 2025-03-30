@@ -46,4 +46,7 @@ addpath([homeDir,'/utils/disp']);
 addpath([homeDir,'/utils/cascade_json_parser']);
 addpath(genpath(module_anddata));
 disp("start");
-run("Aify_cascade_MIMO_signalProcessing_view.m");
+% 定义变量 num
+num = 0:241;
+% 调用函数并传递 num
+Aify_cascade_MIMO_signalProcessing_view(num);
