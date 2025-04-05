@@ -1,3 +1,0 @@
-处理seq 66
-已删除 /NVMe6/RT-Pose/sequences/66/radar处理seq 67
-已删除 /NVMe6/RT-Pose/sequences/67/radar文件夹不存在: /NVMe6/RT-Pose/sequences/68/radar/bin

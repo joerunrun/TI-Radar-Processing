@@ -1,12 +1,7 @@
 function Aify_cascade_MIMO_signalProcessing_view(num)
     % 使用传入的 num
     disp(num);
-    clearvars
-    % close all;
-    clc;
-    
-    
-    
+ 
     %% 参数设置
     
     %运行帧数
@@ -45,17 +40,17 @@ function Aify_cascade_MIMO_signalProcessing_view(num)
     
     
      % 定义 log 文件路径
-        logFile = '~/output_log.txt';
+        logFile = 'D:/xcr/mm/MilliBench/submodule/rawdataprocessing/main/cascade/output_log.txt';
     
         % 打开文件以写入（如果文件已存在，则覆盖）
         fileID = fopen(logFile, 'w');
     
         % 检查文件是否成功打开
         if fileID == -1
-            error('无法打开 log 文件');
+           error('无法打开 log 文件');
         end
     
-    num = 0:241;
+    
     while ~feof(fidList)%如果test.List文件不为空
         %雷达adc数据 路径    
         dataFolder_1 = fgetl(fidList);   
